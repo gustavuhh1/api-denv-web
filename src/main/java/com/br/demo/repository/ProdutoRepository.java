@@ -1,5 +1,6 @@
 package com.br.demo.repository;
 
+import com.br.demo.dto.response.ProdutoResponseDTO;
 import com.br.demo.model.Produto;
 
 import java.util.ArrayList;
@@ -26,17 +27,19 @@ public class ProdutoRepository {
         produtos.removeIf(p -> p.getId().equals(id));
     }
 
-    public Optional<Produto> update(Produto produto){
+    public Produto update(Produto produto){
         return produtos.stream()
-                .filter(p -> p.getId()
-                        .equals(produto.getId()))
+                .filter(p -> p.getId().equals(produto.getId()))
                 .findFirst()
                 .map(p -> {
                     p.setNome(produto.getNome());
                     p.setPreco(produto.getPreco());
                     p.setNumeroSerie(produto.getNumeroSerie());
                     return p;
-                });
+                })
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado para atualizações"));
     }
+
+
 
 }
