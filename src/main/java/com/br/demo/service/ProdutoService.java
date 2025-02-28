@@ -23,13 +23,14 @@ public class ProdutoService {
         List<Produto> lista = produtoRepository.findall();
 
         return lista.stream()
-                .map(p -> new ProdutoResponseDTO(p.getId(), p.getNome(), p.getPreco()))
+                .map(p -> new ProdutoResponseDTO(p.getId(), p.getNome(), p.getPreco(), p.getNumeroSerie()))
                 .collect(Collectors.toList());
     }
     public ProdutoResponseDTO buscarPorId(Long id){
         Produto produto = produtoRepository.finById(id)
                 .orElseThrow(()-> new RuntimeException("Produto não encontrado"));
-        return new ProdutoResponseDTO(produto.getId(), produto.getNome(), produto.getPreco());
+        return new ProdutoResponseDTO(produto.getId(), produto.getNome(), produto.getPreco(),
+                produto.getNumeroSerie());
     }
 
     public  ProdutoResponseDTO criarProduto(ProdutoRequestDTO produtoRequestDTO){
@@ -38,7 +39,8 @@ public class ProdutoService {
                 produtoRequestDTO.getPreco(),
                 produtoRequestDTO.getNumeroSerie());
         Produto produtoSalvo = produtoRepository.save(novoProduto);
-        return new ProdutoResponseDTO(produtoSalvo.getId(), produtoRequestDTO.getNome(), produtoRequestDTO.getPreco());
+        return new ProdutoResponseDTO(produtoSalvo.getId(),produtoRequestDTO.getNome(),produtoRequestDTO.getPreco()
+        ,produtoRequestDTO.getNumeroSerie());
     }
 
     public ProdutoResponseDTO atualizarProduto(Long id, ProdutoRequestDTO produtoRequestDTO){
@@ -51,7 +53,10 @@ public class ProdutoService {
 
         Produto produtoAtualizado = produtoRepository.update(produtoExistente);
 
-        return new ProdutoResponseDTO(produtoAtualizado.getId(),produtoAtualizado.getNome(),produtoAtualizado.getPreco());
+        return new ProdutoResponseDTO(produtoAtualizado
+                .getId(),produtoAtualizado.getNome(),
+                produtoAtualizado.getPreco(),
+                produtoAtualizado.getNumeroSerie());
     }
 
     public void excluirProduto(Long id){
