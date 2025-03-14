@@ -20,7 +20,7 @@ public class CategoriaService {
 
     public List<CategoriaResponseDTO> listarCategorias(){
 
-        List<Categoria> lista = categoriaRepository.findaAll();
+        List<Categoria> lista = categoriaRepository.findAll();
 
         return lista.stream()
                 .map(c -> new CategoriaResponseDTO(c.getId(), c.getNome(), c.getDescricao()))

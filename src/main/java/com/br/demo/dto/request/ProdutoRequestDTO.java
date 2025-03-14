@@ -5,10 +5,13 @@ public class ProdutoRequestDTO {
     private double preco;
     private String numeroSerie;
 
-    public ProdutoRequestDTO(String nome, double preco, String numeroSerie) {
+    private Long categoriaId;
+
+    public ProdutoRequestDTO(String nome, double preco, String numeroSerie, Long categoriaId) {
         this.nome = nome;
         this.preco = preco;
         this.numeroSerie = numeroSerie;
+        this.categoriaId = categoriaId;
     }
 
     public String getNome() {
@@ -33,5 +36,13 @@ public class ProdutoRequestDTO {
 
     public void setNumeroSerie(String numeroSerie) {
         this.numeroSerie = numeroSerie;
+    }
+
+    public Long getCategoriaId() {
+        return categoriaId;
+    }
+
+    public void setCategoriaId(Long categoriaId) {
+        this.categoriaId = categoriaId;
     }
 }

@@ -1,19 +1,27 @@
 package com.br.demo.model;
 
+import jakarta.persistence.*;
+
 public class Produto {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private double preco;
     private String numeroSerie;
 
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria categoria;
+
     public Produto(){}
 
-    public Produto(Long id, String nome, double preco, String numeroSerie) {
-        this.id = id;
+    public Produto(String nome, double preco, String numeroSerie, Categoria categoria) {
         this.nome = nome;
         this.preco = preco;
         this.numeroSerie = numeroSerie;
+        this.categoria = categoria;
     }
 
     public Long getId() {
@@ -48,6 +56,11 @@ public class Produto {
         this.numeroSerie = numeroSerie;
     }
 
+    public Categoria getCategoria() {
+        return this.categoria;
+    }
 
-
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
 }
