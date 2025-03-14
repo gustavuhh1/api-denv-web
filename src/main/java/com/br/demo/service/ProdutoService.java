@@ -52,21 +52,22 @@ public class ProdutoService {
                 produto.getCategoria());
     }
 
-    public ProdutoResponseDTO atualizarProduto(Long id, ProdutoRequestDTO produtoRequestDTO){
-        Produto produtoExistente = produtoRepository.finById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-
-        produtoExistente.setNome(produtoRequestDTO.getNome());
-        produtoExistente.setPreco(produtoRequestDTO.getPreco());
-        produtoExistente.setNumeroSerie(produtoRequestDTO.getNumeroSerie());
-
-        Produto produtoAtualizado = produtoRepository.update(produtoExistente);
-
-        return new ProdutoResponseDTO(produtoAtualizado
-                .getId(),produtoAtualizado.getNome(),
-                produtoAtualizado.getPreco(),
-                produtoAtualizado.getNumeroSerie());
-    }
+//    public ProdutoResponseDTO atualizarProduto(Long id, ProdutoRequestDTO produtoRequestDTO){
+//        Produto produtoExistente = produtoRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+//
+//        produtoExistente.setNome(produtoRequestDTO.getNome());
+//        produtoExistente.setPreco(produtoRequestDTO.getPreco());
+//        produtoExistente.setNumeroSerie(produtoRequestDTO.getNumeroSerie());
+//
+//        Produto produtoAtualizado = produtoRepository.saveAndFlush(produtoExistente);
+//
+//        return new ProdutoResponseDTO(produtoAtualizado
+//                .getId(),produtoAtualizado.getNome(),
+//                produtoAtualizado.getPreco(),
+//                produtoAtualizado.getNumeroSerie(),
+//                produtoAtualizado.getCategoria());
+//    }
 
     public void excluirProduto(Long id){
         produtoRepository.deleteById(id);

@@ -4,6 +4,7 @@ package com.br.demo.controller;
 import com.br.demo.dto.request.ProdutoRequestDTO;
 import com.br.demo.dto.response.ProdutoResponseDTO;
 import com.br.demo.service.ProdutoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,8 @@ import java.util.List;
 @RequestMapping("/produtos")
 public class ProdutoController {
 
-    private final ProdutoService produtoService;
-
-    public ProdutoController(ProdutoService produtoService){
-        this.produtoService = produtoService;
-    }
+    @Autowired
+    private  ProdutoService produtoService;
 
     @GetMapping
     public ResponseEntity<List<ProdutoResponseDTO>> listarProdutos(){
@@ -36,10 +34,10 @@ public class ProdutoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.criarProduto(produtoRequestDTO));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProdutoResponseDTO> atualizarProduto(@PathVariable Long id, @RequestBody ProdutoRequestDTO produtoRequestDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.atualizarProduto(id, produtoRequestDTO));
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<ProdutoResponseDTO> atualizarProduto(@PathVariable Long id, @RequestBody ProdutoRequestDTO produtoRequestDTO){
+//        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.atualizarProduto(id, produtoRequestDTO));
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ProdutoResponseDTO> excluirProduto(@PathVariable Long id){

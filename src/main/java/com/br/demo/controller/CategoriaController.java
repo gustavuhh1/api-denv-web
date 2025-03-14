@@ -4,6 +4,7 @@ package com.br.demo.controller;
 import com.br.demo.dto.request.CategoriaRequestDTO;
 import com.br.demo.dto.response.CategoriaResponseDTO;
 import com.br.demo.service.CategoriaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,8 @@ import java.util.List;
 @RequestMapping("/categorias")
 public class CategoriaController {
 
-    private final CategoriaService categoriaService;
-
-    public CategoriaController(CategoriaService categoriaService){
-        this.categoriaService = categoriaService;
-    }
+    @Autowired
+    private  CategoriaService categoriaService;
 
     @GetMapping
     public ResponseEntity<List<CategoriaResponseDTO>> listarProdutos(){
@@ -36,10 +34,10 @@ public class CategoriaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriaService.criarCategoria(categoriaRequestDTO));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CategoriaResponseDTO> atualizarProduto(@PathVariable Long id, @RequestBody CategoriaResponseDTO categoriaResponseDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaService.atualizarCategoria(id, categoriaResponseDTO));
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<CategoriaResponseDTO> atualizarProduto(@PathVariable Long id, @RequestBody CategoriaResponseDTO categoriaResponseDTO){
+//        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaService.atualizarCategoria(id, categoriaResponseDTO));
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<CategoriaResponseDTO> excluirProduto(@PathVariable Long id){

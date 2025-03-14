@@ -57,7 +57,7 @@ public class Produto {
     }
 
     public Categoria getCategoria() {
-        return this.categoria;
+        return categoria;
     }
 
     public void setCategoria(Categoria categoria) {

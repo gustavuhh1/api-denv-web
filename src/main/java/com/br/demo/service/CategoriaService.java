@@ -5,6 +5,8 @@ import com.br.demo.dto.request.CategoriaRequestDTO;
 import com.br.demo.dto.response.CategoriaResponseDTO;
 import com.br.demo.model.Categoria;
 import com.br.demo.repository.CategoriaRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,11 +14,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class CategoriaService {
-    private final CategoriaRepository categoriaRepository;
-
-    public CategoriaService(CategoriaRepository categoriaRepository) {
-        this.categoriaRepository = categoriaRepository;
-    }
+    @Autowired
+    private  CategoriaRepository categoriaRepository;
 
     public List<CategoriaResponseDTO> listarCategorias(){
 
@@ -28,34 +27,37 @@ public class CategoriaService {
     }
     public CategoriaResponseDTO buscarPorId(Long id){
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Categoria não encontrado"));
+                .orElseThrow(()-> new EntityNotFoundException("Categoria não encontrado"));
         return new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao());
     }
 
     public  CategoriaResponseDTO criarCategoria(CategoriaRequestDTO categoriaRequestDTO){
-        Categoria novaCategoria = new Categoria(null,
+        Categoria novaCategoria = new Categoria(
                 categoriaRequestDTO.getNome(),
                 categoriaRequestDTO.getDescricao());
         Categoria categoriaSalvo = categoriaRepository.save(novaCategoria);
         return new CategoriaResponseDTO(categoriaSalvo.getId(),categoriaRequestDTO.getNome(),categoriaRequestDTO.getDescricao());
     }
 
-    public CategoriaResponseDTO atualizarCategoria(Long id, CategoriaResponseDTO categoriaResponseDTO){
-        Categoria categoriaExistente = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrado"));
-
-        categoriaExistente.setNome(categoriaResponseDTO.getNome());
-        categoriaExistente.setDescricao(categoriaResponseDTO.getDescricao());
-
-        Categoria categoriaAtualizada = categoriaRepository.update(categoriaExistente);
-
-        return new CategoriaResponseDTO(categoriaAtualizada
-                .getId(),categoriaAtualizada.getNome(),
-                categoriaAtualizada.getDescricao());
-    }
+//    public CategoriaResponseDTO atualizarCategoria(Long id, CategoriaResponseDTO categoriaResponseDTO){
+//        Categoria categoriaExistente = categoriaRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Categoria não encontrado"));
+//
+//        categoriaExistente.setNome(categoriaResponseDTO.getNome());
+//        categoriaExistente.setDescricao(categoriaResponseDTO.getDescricao());
+//
+//        Categoria categoriaAtualizada = categoriaRepository.saveAndFlush(categoriaExistente);
+//
+//        return new CategoriaResponseDTO(categoriaAtualizada
+//                .getId(),categoriaAtualizada.getNome(),
+//                categoriaAtualizada.getDescricao());
+//    }
 
     public void excluirCategoria(Long id){
-        categoriaRepository.delete(id);
+        if(!categoriaRepository.existsById(id)){
+            throw new EntityNotFoundException("Categoria não encontrada");
+        }
+        categoriaRepository.deleteById(id);
     }
 
 }
