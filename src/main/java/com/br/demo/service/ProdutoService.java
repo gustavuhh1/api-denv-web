@@ -6,11 +6,11 @@ import com.br.demo.model.Categoria;
 import com.br.demo.model.Produto;
 import com.br.demo.repository.CategoriaRepository;
 import com.br.demo.repository.ProdutoRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,54 +23,45 @@ public class ProdutoService {
     private CategoriaRepository categoriaRepository;
 
     public List<ProdutoResponseDTO> listarProdutos(){
-
-        List<Produto> lista = produtoRepository.findAll();
-
-        return lista.stream()
-                .map(p -> new ProdutoResponseDTO(p.getId(), p.getNome(), p.getPreco(), p.getNumeroSerie(), p.getCategoria()))
+        return produtoRepository.findAll().stream()
+                .map(p -> new ProdutoResponseDTO(p.getId(), p.getNome(), p.getPreco(), p.getCategoria().getNome()))
                 .collect(Collectors.toList());
     }
+
     public ProdutoResponseDTO buscarPorId(Long id){
-        Produto produto = produtoRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Produto não encontrado"));
-        return new ProdutoResponseDTO(produto.getId(), produto.getNome(), produto.getPreco(),
-                produto.getNumeroSerie(), produto.getCategoria());
+        return produtoRepository.findById(id)
+                .map(p -> new ProdutoResponseDTO(p.getId(), p.getNome(), p.getPreco(), p.getCategoria().getNome()))
+                .orElse(null);
     }
 
-    public  ProdutoResponseDTO criarProduto(ProdutoRequestDTO produtoRequestDTO){
-        Categoria categoria = categoriaRepository.findById(produtoRequestDTO.getCategoriaId())
-                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
+    public ProdutoResponseDTO criarProduto(ProdutoRequestDTO requestDTO){
+        Categoria categoria = categoriaRepository.findById(requestDTO.getCategoriaId()).orElse(null);
+        if (categoria == null) return null;
 
-        Produto produto = new Produto(produtoRequestDTO.getNome(), produtoRequestDTO.getPreco(),
-                produtoRequestDTO.getNumeroSerie(),
-                categoria);
+        Produto produto = new Produto(requestDTO.getNome(), requestDTO.getPreco(), requestDTO.getNumeroSerie(), categoria);
         produto = produtoRepository.save(produto);
-        return new ProdutoResponseDTO(produto.getId(),
-                produto.getNome(),
-                produto.getPreco(),
-                produto.getNumeroSerie(),
-                produto.getCategoria());
+
+        return new ProdutoResponseDTO(produto.getId(), produto.getNome(), produto.getPreco(), categoria.getNome());
     }
 
-//    public ProdutoResponseDTO atualizarProduto(Long id, ProdutoRequestDTO produtoRequestDTO){
-//        Produto produtoExistente = produtoRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-//
-//        produtoExistente.setNome(produtoRequestDTO.getNome());
-//        produtoExistente.setPreco(produtoRequestDTO.getPreco());
-//        produtoExistente.setNumeroSerie(produtoRequestDTO.getNumeroSerie());
-//
-//        Produto produtoAtualizado = produtoRepository.saveAndFlush(produtoExistente);
-//
-//        return new ProdutoResponseDTO(produtoAtualizado
-//                .getId(),produtoAtualizado.getNome(),
-//                produtoAtualizado.getPreco(),
-//                produtoAtualizado.getNumeroSerie(),
-//                produtoAtualizado.getCategoria());
-//    }
+    public ProdutoResponseDTO atualizarProduto(Long id, ProdutoRequestDTO requestDTO) {
+        Optional<Produto> optionalProduto = produtoRepository.findById(id);
+        if (optionalProduto.isPresent()) {
+            Produto produto = optionalProduto.get();
+            produto.setNome(requestDTO.getNome());
+            produto.setPreco(requestDTO.getPreco());
+            produto.setNumeroSerie(requestDTO.getNumeroSerie());
+            Categoria categoria = categoriaRepository.findById(requestDTO.getCategoriaId()).orElse(null);
+            if (categoria != null) {
+                produto.setCategoria(categoria);
+            }
+            produtoRepository.save(produto);
+            return new ProdutoResponseDTO(produto.getId(), produto.getNome(), produto.getPreco(), categoria.getNome());
+        }
+        return null;
+    }
 
     public void excluirProduto(Long id){
         produtoRepository.deleteById(id);
     }
-
 }

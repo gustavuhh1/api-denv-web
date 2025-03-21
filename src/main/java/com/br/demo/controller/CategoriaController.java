@@ -1,8 +1,7 @@
 package com.br.demo.controller;
 
 
-import com.br.demo.dto.request.CategoriaRequestDTO;
-import com.br.demo.dto.response.CategoriaResponseDTO;
+import com.br.demo.dto.CategoriaDTO;
 import com.br.demo.service.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,18 +18,18 @@ public class CategoriaController {
     private  CategoriaService categoriaService;
 
     @GetMapping
-    public ResponseEntity<List<CategoriaResponseDTO>> listarProdutos(){
+    public ResponseEntity<List<CategoriaDTO>> listarProdutos(){
 
         return ResponseEntity.ok(categoriaService.listarCategorias());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<CategoriaDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(categoriaService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<CategoriaResponseDTO> criarProduto(@RequestBody CategoriaRequestDTO categoriaRequestDTO){
+    public ResponseEntity<CategoriaDTO> criarProduto(@RequestBody CategoriaDTO categoriaRequestDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriaService.criarCategoria(categoriaRequestDTO));
     }
 
@@ -40,7 +39,7 @@ public class CategoriaController {
 //    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CategoriaResponseDTO> excluirProduto(@PathVariable Long id){
+    public ResponseEntity<CategoriaDTO> excluirProduto(@PathVariable Long id){
         categoriaService.excluirCategoria(id);
         return ResponseEntity.noContent().build();
     }

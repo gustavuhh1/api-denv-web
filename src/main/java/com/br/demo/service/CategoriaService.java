@@ -1,63 +1,56 @@
 package com.br.demo.service;
 
-
-import com.br.demo.dto.request.CategoriaRequestDTO;
-import com.br.demo.dto.response.CategoriaResponseDTO;
+import com.br.demo.dto.CategoriaDTO;
 import com.br.demo.model.Categoria;
 import com.br.demo.repository.CategoriaRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CategoriaService {
-    @Autowired
-    private  CategoriaRepository categoriaRepository;
 
-    public List<CategoriaResponseDTO> listarCategorias(){
+    private final CategoriaRepository categoriaRepository;
 
-        List<Categoria> lista = categoriaRepository.findAll();
+    public CategoriaService(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
+    }
 
-        return lista.stream()
-                .map(c -> new CategoriaResponseDTO(c.getId(), c.getNome(), c.getDescricao()))
+    public List<CategoriaDTO> listarCategorias(){
+        return categoriaRepository.findAll().stream()
+                .map(c -> new CategoriaDTO(c.getNome(), c.getDescricao()))
                 .collect(Collectors.toList());
     }
-    public CategoriaResponseDTO buscarPorId(Long id){
+
+    public CategoriaDTO buscarPorId(Long id){
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("Categoria não encontrado"));
-        return new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao());
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+        return new CategoriaDTO(categoria.getNome(), categoria.getDescricao());
     }
 
-    public  CategoriaResponseDTO criarCategoria(CategoriaRequestDTO categoriaRequestDTO){
-        Categoria novaCategoria = new Categoria(
-                categoriaRequestDTO.getNome(),
-                categoriaRequestDTO.getDescricao());
-        Categoria categoriaSalvo = categoriaRepository.save(novaCategoria);
-        return new CategoriaResponseDTO(categoriaSalvo.getId(),categoriaRequestDTO.getNome(),categoriaRequestDTO.getDescricao());
+    public CategoriaDTO criarCategoria(CategoriaDTO categoriaDTO){
+        Categoria novaCategoria = new Categoria(categoriaDTO.getNome(), categoriaDTO.getDescricao());
+        Categoria categoriaSalva = categoriaRepository.save(novaCategoria);
+        return new CategoriaDTO(categoriaSalva.getNome(), categoriaSalva.getDescricao());
     }
 
-//    public CategoriaResponseDTO atualizarCategoria(Long id, CategoriaResponseDTO categoriaResponseDTO){
-//        Categoria categoriaExistente = categoriaRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Categoria não encontrado"));
-//
-//        categoriaExistente.setNome(categoriaResponseDTO.getNome());
-//        categoriaExistente.setDescricao(categoriaResponseDTO.getDescricao());
-//
-//        Categoria categoriaAtualizada = categoriaRepository.saveAndFlush(categoriaExistente);
-//
-//        return new CategoriaResponseDTO(categoriaAtualizada
-//                .getId(),categoriaAtualizada.getNome(),
-//                categoriaAtualizada.getDescricao());
-//    }
+    public CategoriaDTO atualizarCategoria(Long id, CategoriaDTO categoriaDTO){
+        Optional<Categoria> categoriaOptional = categoriaRepository.findById(id);
+        if(categoriaOptional.isPresent()){
+            Categoria categoria = categoriaOptional.get();
+            categoria.setId(categoriaDTO.getId());
+            categoria.setNome(categoriaDTO.getNome());
+            categoria.setDescricao(categoriaDTO.getDescricao());
+
+            categoriaRepository.save(categoria);
+            return new CategoriaDTO(categoria.getNome(), categoria.getDescricao());
+        }
+        return null;
+    }
 
     public void excluirCategoria(Long id){
-        if(!categoriaRepository.existsById(id)){
-            throw new EntityNotFoundException("Categoria não encontrada");
-        }
         categoriaRepository.deleteById(id);
     }
-
 }

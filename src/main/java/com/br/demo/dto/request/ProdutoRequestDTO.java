@@ -1,17 +1,18 @@
 package com.br.demo.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public class ProdutoRequestDTO {
+
     private String nome;
     private double preco;
     private String numeroSerie;
-
     private Long categoriaId;
 
-    public ProdutoRequestDTO(String nome, double preco, String numeroSerie, Long categoriaId) {
-        this.nome = nome;
-        this.preco = preco;
-        this.numeroSerie = numeroSerie;
-        this.categoriaId = categoriaId;
+    public ProdutoRequestDTO(){
+
     }
 
     public String getNome() {
@@ -43,6 +44,6 @@ public class ProdutoRequestDTO {
     }
 
     public void setCategoriaId(Long categoriaId) {
-        this.categoriaId = categoriaId;
+        categoriaId = categoriaId;
     }
 }

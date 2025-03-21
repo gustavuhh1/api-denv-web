@@ -1,16 +1,17 @@
-package com.br.demo.dto.response;
+package com.br.demo.dto;
 
-public class CategoriaResponseDTO {
+public class CategoriaDTO {
     private Long id;
     private String nome;
     private String descricao;
 
-    public CategoriaResponseDTO() {}
+    public CategoriaDTO() {
+    }
 
-    public CategoriaResponseDTO(Long id, String nome, String descricao) {
-        this.id = id;
+    public CategoriaDTO(String nome, String descricao) {
         this.nome = nome;
         this.descricao = descricao;
+
     }
 
     public Long getId() {

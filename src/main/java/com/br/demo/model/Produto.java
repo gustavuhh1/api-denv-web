@@ -2,6 +2,7 @@ package com.br.demo.model;
 
 import jakarta.persistence.*;
 
+@Entity
 public class Produto {
 
     @Id
@@ -15,7 +16,9 @@ public class Produto {
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
 
-    public Produto(){}
+    public Produto(){
+
+    }
 
     public Produto(String nome, double preco, String numeroSerie, Categoria categoria) {
         this.nome = nome;
